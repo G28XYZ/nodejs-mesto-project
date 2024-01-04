@@ -1,3 +1,4 @@
+import { Joi } from 'celebrate';
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { model, Schema } from 'mongoose';
 
@@ -41,7 +42,7 @@ export type TModelSettings<T> = {
   /** наименование модели */
   nameModel: string;
   /** схема валидации */
-  // validationSchema: Record<string, Joi.PartialSchemaMap<T>>;
+  validationSchema: Record<string, Joi.PartialSchemaMap<T>>;
   /** схема модели */
   schema: Schema<T>;
   /** модель */

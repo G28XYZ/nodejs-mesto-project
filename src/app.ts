@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { errors } from 'celebrate';
 
 import {
   DEFAULT_BASE_PATH,
@@ -12,7 +13,7 @@ import cardRouter from './routes/cards';
 import userRouter from './routes/users';
 import handleError from './errors/error-handler';
 import NotFoundError from './errors/not-found-error';
-import { TControllerParameters } from './utils/types';
+import defineUser from './middlewares/hard-code-user';
 
 const {
   PORT = DEFAULT_PORT,
@@ -27,20 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(DATABASE);
 
-app.use((...[req, _, next]: TControllerParameters) => {
-  req.user = {
-    _id: '659581da16f52c86a1e4ab25', // user1
-    // _id: '659624ecaebfc7182a2196b9', // user2
-    // _id: '659624ecaebfc7182a2196b7', // fake user
-  };
-  next();
-});
+app.use(defineUser);
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
 app.all('*', (_, __, next) => next(new NotFoundError()));
 
+app.use(errors());
 app.use(handleError);
 
 app.listen(PORT, () => {

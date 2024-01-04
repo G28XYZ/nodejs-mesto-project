@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
+import { Joi } from 'celebrate';
 
 import { ICard, TModelSettings } from '../utils/types';
 import { user } from './user';
+import { ERROR_MESSAGES } from '../utils/constants';
+import validationURL from '../utils/validation-url';
+
+const { CARD } = ERROR_MESSAGES;
 
 /**
  * модель настроек для карточки с схемами модели данных и ее валидации
@@ -9,6 +14,23 @@ import { user } from './user';
 // prettier-ignore next-line
 class CardModelSettings<T extends ICard> implements TModelSettings<T> {
   nameModel = 'card';
+
+  validationSchema = {
+    /** схема для валидации при создании карточки */
+    create: {
+      name: Joi.string()
+        .min(2)
+        .rule({ message: CARD.VALIDATION.NAME })
+        .max(30)
+        .rule({ message: CARD.VALIDATION.NAME })
+        .required(),
+      link: Joi.string()
+        .min(2)
+        .required()
+        // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator
+        .custom(validationURL(CARD.VALIDATION.LINK)),
+    },
+  };
 
   schema = new mongoose.Schema<T>(
     {
