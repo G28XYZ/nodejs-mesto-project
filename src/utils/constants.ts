@@ -1,6 +1,6 @@
 export const DEFAULT_PORT = 3000;
 export const DEFAULT_BASE_PATH = 'http://localhost';
-export const DEFAULT_MONGO_DB_PATH = 'mongodb://localhost:27017';
+export const DEFAULT_MONGO_DB_PATH = 'mongodb://127.0.0.1:27017';
 export const DEFAULT_MONGO_DB_NAME = 'mestodb';
 
 export const ERROR_MESSAGES = {
@@ -13,6 +13,7 @@ export const ERROR_MESSAGES = {
     },
     GET: {
       404: 'Пользователь по указанному _id не найден.',
+      400: 'Передан некорректный _id',
     },
     CREATE: {
       400: 'Переданы некорректные данные при создании пользователя.',

@@ -18,7 +18,8 @@ export default class {
   /** получить пользователя по id */
   @catchError(USER.GET, new ValidationError(USER.GET[404]))
   static async getUser(...[req, res]: TControllerParameters) {
-    return res.send(await User.findById(req.params.userId));
+    const user = await User.findOne({ _id: req.params.userId });
+    return res.send(user);
   }
 
   /** создать пользователя */
