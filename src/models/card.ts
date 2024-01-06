@@ -6,7 +6,7 @@ import { user } from './user';
 import { ERROR_MESSAGES } from '../utils/constants';
 import validationURL from '../utils/validation-url';
 
-const { CARD } = ERROR_MESSAGES;
+const { CARD, GENERAL } = ERROR_MESSAGES;
 
 /**
  * модель настроек для карточки с схемами модели данных и ее валидации
@@ -19,12 +19,14 @@ class CardModelSettings<T extends ICard> implements TModelSettings<T> {
     /** схема для валидации при создании карточки */
     create: {
       name: Joi.string()
+        .label(GENERAL.LABELS.CARD_NAME)
         .min(2)
         .rule({ message: CARD.VALIDATION.NAME })
         .max(30)
         .rule({ message: CARD.VALIDATION.NAME })
         .required(),
       link: Joi.string()
+        .label(GENERAL.LABELS.LINK)
         .min(2)
         .required()
         // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator

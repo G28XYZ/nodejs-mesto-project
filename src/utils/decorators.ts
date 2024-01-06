@@ -35,7 +35,6 @@ export default function catchError<T extends Error & { statusCode: number }>(
         }
 
         if (errorInstance) return next(errorInstance);
-
         // prettier-ignore
         return next(new InternalError(message || STATUS_CODES[INTERNAL_SERVER_ERROR_500]));
       }

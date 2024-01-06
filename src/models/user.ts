@@ -5,7 +5,7 @@ import { IUser, TModelSettings } from '../utils/types';
 import { ERROR_MESSAGES } from '../utils/constants';
 import validationURL from '../utils/validation-url';
 
-const { USER } = ERROR_MESSAGES;
+const { USER, GENERAL } = ERROR_MESSAGES;
 
 /**
  * модель настроек для пользователя с схемами модели данных и ее валидации
@@ -18,18 +18,21 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
     /** схема для валидации при создании пользователя */
     create: {
       name: Joi.string()
+        .label(GENERAL.LABELS.USERNAME)
         .min(2)
         .rule({ message: USER.VALIDATION.NAME })
         .max(30)
         .rule({ message: USER.VALIDATION.NAME })
         .required(),
       about: Joi.string()
+        .label(GENERAL.LABELS.ABOUT)
         .min(2)
         .rule({ message: USER.VALIDATION.ABOUT })
         .max(30)
         .rule({ message: USER.VALIDATION.ABOUT })
         .required(),
       avatar: Joi.string()
+        .label(GENERAL.LABELS.AVATAR)
         .required()
         // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator
         .custom(validationURL(USER.VALIDATION.AVATAR)),

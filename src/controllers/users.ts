@@ -16,18 +16,23 @@ export default class {
   }
 
   /** получить пользователя по id */
-  @catchError(USER.GET, new ValidationError(USER.GET[404]))
-  static async getUser(...[req, res]: TControllerParameters) {
-    const user = await User.findOne({ _id: req.params.userId });
-    return res.send(user);
+  @catchError(USER.GET, new ValidationError(USER.GET[400]))
+  static async getUser(...[req, res, next]: TControllerParameters) {
+    const user = await User.findById(req.params.userId);
+    return user ? res.send(user) : next(new NotFoundError(USER.GET[404]));
   }
 
   /** создать пользователя */
   @catchError(USER.CREATE)
   static async createUser(...[req, res]: TControllerParameters) {
     const { name, about, avatar } = req.body;
-    await User.create({ name, about, avatar });
-    return res.status(HTTP_CODES.CREATED_201).send({ name, about, avatar });
+    const user = await User.create({ name, about, avatar });
+    return res.status(HTTP_CODES.CREATED_201).send({
+      name,
+      about,
+      avatar,
+      _id: user._id,
+    });
   }
 
   /** обновить профиль пользователя */
