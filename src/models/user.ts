@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { Joi } from 'celebrate';
 import { IUser, TModelSettings } from '../utils/types';
 import { ERROR_MESSAGES } from '../utils/constants';
-import validationURL from '../utils/validation-url';
+import validation from '../utils/validation';
 
 const { USER, GENERAL } = ERROR_MESSAGES;
 
@@ -35,7 +35,11 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
         .label(GENERAL.LABELS.AVATAR)
         .required()
         // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator
-        .custom(validationURL(USER.VALIDATION.AVATAR)),
+        .custom(validation(USER.VALIDATION.AVATAR, 'url')),
+      email: Joi.string()
+        .required()
+        .custom(validation(USER.VALIDATION.EMAIL, 'email')),
+      password: Joi.string().required(),
     },
   };
 
@@ -67,6 +71,17 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
       avatar: {
         type: String,
         required: true,
+      },
+      email: {
+        type: String,
+        unique: true,
+        required: true,
+        dropDups: true,
+      },
+      password: {
+        type: String,
+        required: true,
+        select: false,
       },
     },
     // убирает поле __v

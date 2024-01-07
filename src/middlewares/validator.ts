@@ -19,6 +19,7 @@ export default function validator(
     {
       messages: {
         'string.empty': ERROR_MESSAGES.GENERAL.VALIDATION.EMPTY,
+        'any.required': ERROR_MESSAGES.GENERAL.VALIDATION.EMPTY,
       },
     },
   );

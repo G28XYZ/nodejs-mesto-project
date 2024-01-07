@@ -4,7 +4,7 @@ import { Joi } from 'celebrate';
 import { ICard, TModelSettings } from '../utils/types';
 import { user } from './user';
 import { ERROR_MESSAGES } from '../utils/constants';
-import validationURL from '../utils/validation-url';
+import validation from '../utils/validation';
 
 const { CARD, GENERAL } = ERROR_MESSAGES;
 
@@ -30,7 +30,7 @@ class CardModelSettings<T extends ICard> implements TModelSettings<T> {
         .min(2)
         .required()
         // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator
-        .custom(validationURL(CARD.VALIDATION.LINK)),
+        .custom(validation(CARD.VALIDATION.LINK, 'url')),
     },
   };
 
