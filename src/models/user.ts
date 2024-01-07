@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 
 import { Joi } from 'celebrate';
 import { IUser, TModelSettings } from '../utils/types';
-import { ERROR_MESSAGES } from '../utils/constants';
+import {
+  ERROR_MESSAGES,
+  DEFAULT_USER_SETTINGS as DEFAULT,
+} from '../utils/constants';
 import validation from '../utils/validation';
 
 const { USER, GENERAL } = ERROR_MESSAGES;
@@ -22,24 +25,22 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
         .min(2)
         .rule({ message: USER.VALIDATION.NAME })
         .max(30)
-        .rule({ message: USER.VALIDATION.NAME })
-        .required(),
+        .rule({ message: USER.VALIDATION.NAME }),
       about: Joi.string()
         .label(GENERAL.LABELS.ABOUT)
         .min(2)
         .rule({ message: USER.VALIDATION.ABOUT })
         .max(30)
-        .rule({ message: USER.VALIDATION.ABOUT })
-        .required(),
+        .rule({ message: USER.VALIDATION.ABOUT }),
       avatar: Joi.string()
         .label(GENERAL.LABELS.AVATAR)
-        .required()
         // uri некорректно валидирует ссылку, поэтому вместо нее custom с методом из validator
         .custom(validation(USER.VALIDATION.AVATAR, 'url')),
       email: Joi.string()
+        .label(GENERAL.LABELS.EMAIL)
         .required()
         .custom(validation(USER.VALIDATION.EMAIL, 'email')),
-      password: Joi.string().required(),
+      password: Joi.string().label(GENERAL.LABELS.PASSWORD).required(),
     },
   };
 
@@ -61,16 +62,19 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
         minLength: 2,
         maxLength: 30,
         required: true,
+        default: DEFAULT.NAME,
       },
       about: {
         type: String,
         minLength: 2,
         maxLength: 30,
         required: true,
+        default: DEFAULT.ABOUT,
       },
       avatar: {
         type: String,
         required: true,
+        default: DEFAULT.AVATAR,
       },
       email: {
         type: String,

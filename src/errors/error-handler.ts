@@ -9,6 +9,7 @@ const { INTERNAL_SERVER_ERROR_500 } = HTTP_CODES;
 const getCelebrateValidation = (err: CelebrateError) => (err.details.get('body')?.details as unknown as Joi.ValidationError['details'])[0];
 
 const handleError: TErrorHandler = (err, _, res, next) => {
+  // TODO - SyntaxError
   let statusCode = 0;
   let message = '';
   if (isCelebrateError(err)) {

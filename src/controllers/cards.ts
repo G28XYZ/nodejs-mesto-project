@@ -1,4 +1,4 @@
-import { HTTP_CODES, TControllerParameters } from '../utils/types';
+import { HTTP_CODES, TCardCtrlParams } from '../utils/types';
 import Card from '../models/card';
 import catchError from '../utils/decorators';
 import ValidationError from '../errors/validation-error';
@@ -14,13 +14,13 @@ const {
 export default class {
   /** получить массив всех карточек */
   @catchError()
-  static async getCards(...[_, res]: TControllerParameters) {
+  static async getCards(...[_, res]: TCardCtrlParams) {
     return res.send(await Card.find());
   }
 
   /** создать карточку */
   @catchError(CARD.CREATE, new ValidationError(CARD.CREATE[400]))
-  static async createCard(...[req, res]: TControllerParameters) {
+  static async createCard(...[req, res]: TCardCtrlParams) {
     const { name, link } = req.body;
     const owner = req.user?._id;
     const card = await Card.create({ name, link, owner });
@@ -29,7 +29,7 @@ export default class {
 
   /** удалить карточку */
   @catchError(CARD.DELETE, new ValidationError(CARD.DELETE[404]))
-  static async deleteCard(...[req, res, next]: TControllerParameters) {
+  static async deleteCard(...[req, res, next]: TCardCtrlParams) {
     const card = await Card.findById(req.params.cardId);
 
     if (!card) return next(new NotFoundError(CARD.DELETE[404]));
@@ -43,7 +43,7 @@ export default class {
 
   /** поставить лайк карточке */
   @catchError(CARD.LIKE, new ValidationError(CARD.LIKE[400]))
-  static async likeCard(...[req, res, next]: TControllerParameters) {
+  static async likeCard(...[req, res, next]: TCardCtrlParams) {
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: req.user?._id } },
@@ -57,7 +57,7 @@ export default class {
 
   /** удалить лайк */
   @catchError(CARD.LIKE, new ValidationError(CARD.LIKE[400]))
-  static async dislikeCard(...[req, res, next]: TControllerParameters) {
+  static async dislikeCard(...[req, res, next]: TCardCtrlParams) {
     const card = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: req.user?._id } },

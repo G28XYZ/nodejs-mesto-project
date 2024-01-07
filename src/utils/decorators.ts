@@ -6,12 +6,14 @@ import {
   TController,
   TControllerParameters,
   TDecoratorMethod,
+  TError,
 } from './types';
 import InternalError from '../errors/internal-error';
 
 const { INTERNAL_SERVER_ERROR_500 } = HTTP_CODES;
+
 /** декоратор для перехвата ошибок в контроллерах */
-export default function catchError<T extends Error & { statusCode: number }>(
+export default function catchError<T extends TError>(
   errors?: Record<number, string>,
   errorInstance?: T,
 ): TDecoratorMethod {

@@ -32,7 +32,7 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
-      { "destructuredArrayIgnorePattern": "^_" }
+      { "destructuredArrayIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ]
   }
 }

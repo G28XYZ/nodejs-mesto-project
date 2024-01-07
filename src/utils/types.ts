@@ -2,16 +2,19 @@ import { Joi } from 'celebrate';
 import { NextFunction, Request, Response } from 'express';
 import { Types, model, Schema } from 'mongoose';
 
-export type TController = Record<
+export type TParams = Partial<{ userId: string; cardId: string }>;
+
+export type TController<TBody = any> = Record<
   string,
   (
-    req: Request & Partial<{ user: { _id: string } }>,
+    req: Request<TParams, {}, TBody> & Partial<{ user: { _id: string } }>,
     res: Response,
     next: NextFunction,
   ) => Promise<any> | any
 >;
 /** тип для параметров контроллера */
-export type TControllerParameters = Parameters<TController[string]>;
+export type TControllerParameters<T extends Record<string, any> = any> =
+  Parameters<TController<T>[string]>;
 
 export type TDecoratorMethod = (
   target: Function,
@@ -19,10 +22,14 @@ export type TDecoratorMethod = (
   descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
 
-export type TErrorHandler = <E extends Error>(
+export type TErrorHandler<T extends Record<string, any> = any> = <
+  E extends Error,
+>(
   err: E & Request,
-  ...args: TControllerParameters
+  ...args: TControllerParameters<T>
 ) => any;
+
+export type TError = Error & { statusCode: number };
 
 export interface IUser {
   name: string;
@@ -65,3 +72,7 @@ export enum HTTP_CODES {
   NOT_FOUND_404 = 404,
   INTERNAL_SERVER_ERROR_500 = 500,
 }
+
+export type TUserCtrlParams = TControllerParameters<IUser>;
+
+export type TCardCtrlParams = TControllerParameters<ICard>;

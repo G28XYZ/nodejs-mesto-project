@@ -2,6 +2,14 @@ export const DEFAULT_PORT = 3000;
 export const DEFAULT_BASE_PATH = 'http://localhost';
 export const DEFAULT_MONGO_DB_PATH = 'mongodb://localhost:27017';
 export const DEFAULT_MONGO_DB_NAME = 'mestodb';
+export const DEFAULT_SALT_LENGTH = 10;
+
+export const DEFAULT_USER_SETTINGS = {
+  NAME: 'Жак-Ив Кусто',
+  ABOUT: 'Исследователь',
+  AVATAR:
+    'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+};
 
 export const ERROR_MESSAGES = {
   GENERAL: {
@@ -14,6 +22,8 @@ export const ERROR_MESSAGES = {
       ABOUT: 'О себе',
       LINK: 'Ссылка на картинку',
       CARD_NAME: 'Название карточки',
+      PASSWORD: 'Пароль',
+      EMAIL: 'Почта',
     },
   },
   USER: {
