@@ -137,4 +137,10 @@ export default class {
 
     return res.send({ token });
   }
+
+  @catchError(USER.GET, new NotFoundError(USER.GET[NOT_FOUND_404]))
+  static async getMe(...[req, res]: TUserCtrlParams) {
+    console.log(req.user?._id);
+    return res.send(await User.find({ _id: req.user?._id }));
+  }
 }

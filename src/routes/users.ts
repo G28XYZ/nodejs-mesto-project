@@ -11,11 +11,13 @@ const {
   getUser,
   updateProfile,
   updateAvatar,
+  getMe,
 } = userController;
 
 const router = Router();
 
 router.get('/', getUsers);
+router.get('/me', getMe);
 router.get('/:userId', getUser);
 router.patch(
   '/me',
