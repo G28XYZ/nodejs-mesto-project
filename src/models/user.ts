@@ -101,8 +101,8 @@ class UserModelSettings<
     { versionKey: false },
   ).static(
     'findUserByCredentials',
-    async function findUserByCredentials(email: string, password: string) {
-      const user = await this.findOne({ email });
+    async function _(email: string, password: string) {
+      const user = await this.findOne({ email }, {}, { runValidators: true }).select('+password');
       if (!user) {
         return Promise.reject(new UnauthorizedError(USER.LOGIN[HTTP_CODES.UNAUTHORIZED_401]));
       }
