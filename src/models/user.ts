@@ -2,7 +2,7 @@ import mongoose, { Model } from 'mongoose';
 import { Joi } from 'celebrate';
 import bcrypt from 'bcryptjs';
 
-import { IUser, TModelSettings } from '../utils/types';
+import { HTTP_CODES, IUser, TModelSettings } from '../utils/types';
 import {
   ERROR_MESSAGES,
   DEFAULT_USER_SETTINGS as DEFAULT,
@@ -104,7 +104,7 @@ class UserModelSettings<
     async function findUserByCredentials(email: string, password: string) {
       const user = await this.findOne({ email });
       if (!user) {
-        return Promise.reject(new UnauthorizedError()); // TODO - перенести текст в constants
+        return Promise.reject(new UnauthorizedError(USER.LOGIN[HTTP_CODES.UNAUTHORIZED_401]));
       }
       return bcrypt.compare(password, user.password);
     },

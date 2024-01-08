@@ -11,8 +11,11 @@ import {
 
 import cardRouter from './routes/cards';
 import userRouter from './routes/users';
+import auth from './routes/auth';
+
 import handleError from './errors/error-handler';
 import NotFoundError from './errors/not-found-error';
+
 import defineUser from './middlewares/hard-code-user';
 import limiter from './middlewares/limiter';
 import bodyParserMiddleware from './middlewares/body-parser-middleware';
@@ -34,6 +37,7 @@ app.use(helmet());
 app.use(limiter);
 app.use(defineUser);
 
+app.use('/', auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 

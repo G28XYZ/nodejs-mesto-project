@@ -22,8 +22,23 @@ export type TDecoratorMethod = (
   descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
 
+/**
+ * @see {@link https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP}
+ * коды ошибок по типу
+ */
+// eslint-disable-next-line no-shadow
+export enum HTTP_CODES {
+  OK_200 = 200,
+  CREATED_201 = 201,
+  BAD_REQUEST_400 = 400,
+  UNAUTHORIZED_401 = 401,
+  FORBIDDEN_403 = 403,
+  NOT_FOUND_404 = 404,
+  CONFLICT_409 = 409,
+  INTERNAL_SERVER_ERROR_500 = 500,
+}
 export interface IError extends Error {
-  statusCode: number;
+  statusCode: HTTP_CODES;
 }
 
 export type TError = new <T extends IError>(message?: string) => T;
@@ -60,22 +75,6 @@ export type TModelSettings<T = any, M = any> = {
   /** модель */
   get model(): ReturnType<typeof model>;
 };
-
-/**
- * @see {@link https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP}
- * коды ошибок по типу
- */
-// eslint-disable-next-line no-shadow
-export enum HTTP_CODES {
-  OK_200 = 200,
-  CREATED_201 = 201,
-  BAD_REQUEST_400 = 400,
-  UNAUTHORIZED_401 = 401,
-  FORBIDDEN_403 = 403,
-  NOT_FOUND_404 = 404,
-  CONFLICT_409 = 409,
-  INTERNAL_SERVER_ERROR_500 = 500,
-}
 
 export type TUserCtrlParams = TControllerParameters<IUser>;
 

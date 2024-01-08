@@ -9,7 +9,6 @@ import { user } from '../models/user';
 const {
   getUsers,
   getUser,
-  createUser,
   updateProfile,
   updateAvatar,
 } = userController;
@@ -18,11 +17,6 @@ const router = Router();
 
 router.get('/', getUsers);
 router.get('/:userId', getUser);
-router.post(
-  '/',
-  validator(Segments.BODY, user.validationSchema.create),
-  createUser,
-);
 router.patch(
   '/me',
   validator(Segments.BODY, user.validationSchema.updateProfile),

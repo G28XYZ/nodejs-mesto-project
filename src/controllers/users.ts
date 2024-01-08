@@ -5,6 +5,7 @@ import User from '../models/user';
 import NotFoundError from '../errors/not-found-error';
 import ValidationError from '../errors/validation-error';
 import UnauthorizedError from '../errors/unauthorized-error';
+import ConflictError from '../errors/conflict-error';
 
 import catchError from '../utils/decorators';
 import { HTTP_CODES, TUserCtrlParams } from '../utils/types';
@@ -17,6 +18,13 @@ import {
 const { USER } = ERROR_MESSAGES;
 // prettier-ignore
 const { SALT_LENGTH = DEFAULT_SALT_LENGTH, JWT_SECRET = DEFAULT_JWT_SECRET } = process.env;
+// prettier-ignore
+const {
+  CREATED_201,
+  UNAUTHORIZED_401,
+  BAD_REQUEST_400,
+  NOT_FOUND_404,
+} = HTTP_CODES;
 
 /** контроллер для {@link User} */
 export default class {
@@ -27,32 +35,42 @@ export default class {
   }
 
   /** получить пользователя по id */
-  @catchError(USER.GET, new ValidationError(USER.GET[400]))
+  @catchError(USER.GET, new ValidationError(USER.GET[BAD_REQUEST_400]))
   static async getUser(...[req, res, next]: TUserCtrlParams) {
     const user = await User.findById(req.params.userId);
-    return user ? res.send(user) : next(new NotFoundError(USER.GET[404]));
+    return user
+      ? res.send(user)
+      : next(new NotFoundError(USER.GET[NOT_FOUND_404]));
   }
 
   /** создать пользователя */
-  @catchError(USER.CREATE)
+  @catchError(USER.CREATE, new ConflictError())
   static async createUser(...[{ body }, res]: TUserCtrlParams) {
     // prettier-ignore
     const {
-      name,
-      about,
-      avatar,
       email,
+      password,
+      ...user
     } = body;
-
-    const { password: _, ...user } = await User.create({
+    // prettier-ignore
+    const {
+      _id,
       name,
       about,
       avatar,
+    } = await User.create({
+      ...user,
       email,
-      password: await bcrypt.hash(body.password, SALT_LENGTH),
+      password: await bcrypt.hash(password, SALT_LENGTH),
     });
 
-    return res.status(HTTP_CODES.CREATED_201).send(user);
+    return res.status(CREATED_201).send({
+      _id,
+      name,
+      about,
+      avatar,
+      email,
+    });
   }
 
   /** обновить профиль пользователя */
@@ -66,7 +84,7 @@ export default class {
       { runValidators: true },
     );
 
-    if (!user) return next(new NotFoundError(USER.PROFILE[404]));
+    if (!user) return next(new NotFoundError(USER.PROFILE[NOT_FOUND_404]));
 
     return res.send({
       _id: user?._id,
@@ -87,7 +105,7 @@ export default class {
       { runValidators: true },
     );
 
-    if (!user) return next(new NotFoundError(USER.AVATAR[404]));
+    if (!user) return next(new NotFoundError(USER.AVATAR[NOT_FOUND_404]));
 
     return res.send({
       _id: user?._id,
@@ -97,7 +115,7 @@ export default class {
     });
   }
 
-  @catchError(USER.LOGIN, new UnauthorizedError())
+  @catchError(USER.LOGIN, new UnauthorizedError(USER.LOGIN[UNAUTHORIZED_401]))
   static async login(...[req, res]: TUserCtrlParams) {
     const { email, password } = req.body;
     const user = await User.findUserByCredentials(email, password);

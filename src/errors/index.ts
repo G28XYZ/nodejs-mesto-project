@@ -4,6 +4,7 @@ import CastError from './cast-error';
 import ForbiddenError from './forbidden-error';
 import InternalError from './internal-error';
 import UnauthorizedError from './unauthorized-error';
+import ConflictError from './conflict-error';
 import { TError } from '../utils/types';
 
 export default {
@@ -14,4 +15,5 @@ export default {
   InternalError,
   SyntaxError,
   UnauthorizedError,
+  ConflictError,
 } as Record<string, TError>;
