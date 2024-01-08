@@ -19,6 +19,7 @@ import NotFoundError from './errors/not-found-error';
 import defineUser from './middlewares/hard-code-user';
 import limiter from './middlewares/limiter';
 import bodyParserMiddleware from './middlewares/body-parser-middleware';
+import authProtect from './middlewares/auth-protect';
 
 const {
   PORT = DEFAULT_PORT,
@@ -38,6 +39,7 @@ app.use(limiter);
 app.use(defineUser);
 
 app.use('/', auth);
+app.use(authProtect);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 

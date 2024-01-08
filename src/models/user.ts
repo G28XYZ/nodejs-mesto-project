@@ -103,10 +103,10 @@ class UserModelSettings<
     'findUserByCredentials',
     async function _(email: string, password: string) {
       const user = await this.findOne({ email }, {}, { runValidators: true }).select('+password');
-      if (!user) {
+      if (!user || !await bcrypt.compare(password, user.password)) {
         return Promise.reject(new UnauthorizedError(USER.LOGIN[HTTP_CODES.UNAUTHORIZED_401]));
       }
-      return bcrypt.compare(password, user.password);
+      return user;
     },
   );
 

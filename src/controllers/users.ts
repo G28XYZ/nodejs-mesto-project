@@ -8,7 +8,7 @@ import UnauthorizedError from '../errors/unauthorized-error';
 import ConflictError from '../errors/conflict-error';
 
 import catchError from '../utils/decorators';
-import { HTTP_CODES, TUserCtrlParams } from '../utils/types';
+import { HTTP_CODES, TSessionRequest, TUserCtrlParams } from '../utils/types';
 import {
   DEFAULT_JWT_SECRET,
   DEFAULT_SALT_LENGTH,
@@ -25,6 +25,12 @@ const {
   BAD_REQUEST_400,
   NOT_FOUND_404,
 } = HTTP_CODES;
+
+const createToken = (
+  payload: TSessionRequest['user'],
+  secretOrPrivateKey?: jwt.Secret,
+  options?: jwt.SignOptions,
+) => jwt.sign(payload, secretOrPrivateKey || JWT_SECRET, options);
 
 /** контроллер для {@link User} */
 export default class {
@@ -100,7 +106,7 @@ export default class {
     const { avatar } = req.body;
 
     const user = await User.findByIdAndUpdate(
-      req?.user?._id,
+      req.user?._id,
       { avatar },
       { runValidators: true },
     );
@@ -118,10 +124,9 @@ export default class {
   @catchError(USER.LOGIN, new UnauthorizedError(USER.LOGIN[UNAUTHORIZED_401]))
   static async login(...[req, res]: TUserCtrlParams) {
     const { email, password } = req.body;
-    const user = await User.findUserByCredentials(email, password);
-    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const { _id } = await User.findUserByCredentials(email, password);
+
+    const token = createToken({ _id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.cookie('JWT', token, {
       maxAge: 3600000,

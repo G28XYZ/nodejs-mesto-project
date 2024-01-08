@@ -4,10 +4,12 @@ import { Types, model, Schema } from 'mongoose';
 
 export type TParams = Partial<{ userId: string; cardId: string }>;
 
+export type TSessionRequest = { user: { _id: string } };
+
 export type TController<TBody = any> = Record<
   string,
   (
-    req: Request<TParams, {}, TBody> & Partial<{ user: { _id: string } }>,
+    req: Request<TParams, {}, TBody> & Partial<TSessionRequest>,
     res: Response,
     next: NextFunction,
   ) => Promise<any> | any
