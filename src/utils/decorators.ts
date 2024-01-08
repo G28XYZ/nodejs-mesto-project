@@ -13,7 +13,7 @@ import InternalError from '../errors/internal-error';
 const { INTERNAL_SERVER_ERROR_500 } = HTTP_CODES;
 
 /** декоратор для перехвата ошибок в контроллерах */
-export default function catchError<T extends TError>(
+export default function catchError<T extends InstanceType<TError>>(
   errors?: Record<number, string>,
   errorInstance?: T,
 ): TDecoratorMethod {
@@ -30,7 +30,7 @@ export default function catchError<T extends TError>(
       } catch (e: any) {
         const { message, name } = e;
         if (name in Errors) {
-          const error = new Errors[name]() as T;
+          const error = new Errors[name]();
           // prettier-ignore
           error.message = errors && error.statusCode in errors ? errors[error.statusCode] : message;
           return next(error);

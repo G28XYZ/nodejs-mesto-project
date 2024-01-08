@@ -3,7 +3,8 @@ import ValidationError from './validation-error';
 import CastError from './cast-error';
 import ForbiddenError from './forbidden-error';
 import InternalError from './internal-error';
-import SyntaxError from './syntax-error';
+import UnauthorizedError from './unauthorized-error';
+import { TError } from '../utils/types';
 
 export default {
   NotFoundError,
@@ -12,4 +13,5 @@ export default {
   ForbiddenError,
   InternalError,
   SyntaxError,
-} as Record<string, new <T extends Error>(message?: string) => T>;
+  UnauthorizedError,
+} as Record<string, TError>;

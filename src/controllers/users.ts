@@ -1,15 +1,22 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-import { HTTP_CODES, TUserCtrlParams } from '../utils/types';
 import User from '../models/user';
-import catchError from '../utils/decorators';
 import NotFoundError from '../errors/not-found-error';
 import ValidationError from '../errors/validation-error';
-import { DEFAULT_SALT_LENGTH, ERROR_MESSAGES } from '../utils/constants';
+import UnauthorizedError from '../errors/unauthorized-error';
+
+import catchError from '../utils/decorators';
+import { HTTP_CODES, TUserCtrlParams } from '../utils/types';
+import {
+  DEFAULT_JWT_SECRET,
+  DEFAULT_SALT_LENGTH,
+  ERROR_MESSAGES,
+} from '../utils/constants';
 
 const { USER } = ERROR_MESSAGES;
-
-const { SALT_LENGTH = DEFAULT_SALT_LENGTH } = process.env;
+// prettier-ignore
+const { SALT_LENGTH = DEFAULT_SALT_LENGTH, JWT_SECRET = DEFAULT_JWT_SECRET } = process.env;
 
 /** контроллер для {@link User} */
 export default class {
@@ -88,5 +95,23 @@ export default class {
       name: user?.name,
       about: user?.about,
     });
+  }
+
+  @catchError(USER.LOGIN, new UnauthorizedError())
+  static async login(...[req, res]: TUserCtrlParams) {
+    const { email, password } = req.body;
+    const user = await User.findUserByCredentials(email, password);
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      expiresIn: '7d',
+    });
+
+    res.cookie('JWT', token, {
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    return res.send({ token });
   }
 }

@@ -22,16 +22,19 @@ export type TDecoratorMethod = (
   descriptor: PropertyDescriptor,
 ) => PropertyDescriptor;
 
-export type TErrorHandler<T extends Record<string, any> = any> = <
-  E extends Error,
->(
+export interface IError extends Error {
+  statusCode: number;
+}
+
+export type TError = new <T extends IError>(message?: string) => T;
+
+export type TErrorHandler = <E extends InstanceType<TError>>(
   err: E & Request,
-  ...args: TControllerParameters<T>
+  ...args: TControllerParameters<{}>
 ) => any;
 
-export type TError = Error & { statusCode: number };
-
 export interface IUser {
+  _id: string;
   name: string;
   about: string;
   avatar: string;
@@ -47,13 +50,13 @@ export interface ICard {
   createdAt: Date;
 }
 /** поля для класса настроек модели */
-export type TModelSettings<T> = {
+export type TModelSettings<T = any, M = any> = {
   /** наименование модели */
   nameModel: string;
   /** схема валидации */
   validationSchema: Record<string, Joi.PartialSchemaMap<T>>;
   /** схема модели */
-  schema: Schema<T>;
+  schema: Schema<T, M>;
   /** модель */
   get model(): ReturnType<typeof model>;
 };
@@ -70,6 +73,7 @@ export enum HTTP_CODES {
   UNAUTHORIZED_401 = 401,
   FORBIDDEN_403 = 403,
   NOT_FOUND_404 = 404,
+  CONFLICT_409 = 409,
   INTERNAL_SERVER_ERROR_500 = 500,
 }
 

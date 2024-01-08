@@ -1,14 +1,12 @@
-import { HTTP_CODES, TCardCtrlParams } from '../utils/types';
 import Card from '../models/card';
-import catchError from '../utils/decorators';
 import ValidationError from '../errors/validation-error';
 import NotFoundError from '../errors/not-found-error';
-import { ERROR_MESSAGES } from '../utils/constants';
 
-// prettier-ignore
-const {
-  CARD,
-} = ERROR_MESSAGES;
+import catchError from '../utils/decorators';
+import { ERROR_MESSAGES } from '../utils/constants';
+import { HTTP_CODES, TCardCtrlParams } from '../utils/types';
+
+const { CARD } = ERROR_MESSAGES;
 
 /** контроллер для {@link Card} */
 export default class {

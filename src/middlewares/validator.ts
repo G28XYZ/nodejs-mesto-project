@@ -10,7 +10,7 @@ import { ERROR_MESSAGES } from '../utils/constants';
  */
 export default function validator(
   segment: Segments,
-  schema: TModelSettings<any>['validationSchema'][string],
+  schema: TModelSettings['validationSchema'][string],
 ) {
   return celebrate(
     {

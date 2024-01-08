@@ -1,10 +1,10 @@
 import { STATUS_CODES } from 'http';
 
-import { HTTP_CODES } from '../utils/types';
+import { HTTP_CODES, IError } from '../utils/types';
 
 const { BAD_REQUEST_400 } = HTTP_CODES;
 
-export default class CastError extends Error {
+export default class CastError extends Error implements IError {
   statusCode = BAD_REQUEST_400;
 
   constructor(message?: string) {

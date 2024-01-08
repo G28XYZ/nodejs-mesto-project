@@ -1,10 +1,10 @@
 import { STATUS_CODES } from 'http';
 
-import { HTTP_CODES } from '../utils/types';
+import { HTTP_CODES, IError } from '../utils/types';
 
 const { NOT_FOUND_404 } = HTTP_CODES;
 
-export default class NotFoundError extends Error {
+export default class NotFoundError extends Error implements IError {
   statusCode = NOT_FOUND_404;
 
   constructor(message?: string) {

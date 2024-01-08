@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Joi } from 'celebrate';
 
 import { ICard, TModelSettings } from '../utils/types';
@@ -11,8 +11,8 @@ const { CARD, GENERAL } = ERROR_MESSAGES;
 /**
  * модель настроек для карточки с схемами модели данных и ее валидации
  */
-// prettier-ignore next-line
-class CardModelSettings<T extends ICard> implements TModelSettings<T> {
+// prettier-ignore
+class CardModelSettings<T extends ICard, M extends Model<T>> implements TModelSettings<T, M> {
   nameModel = 'card';
 
   validationSchema = {

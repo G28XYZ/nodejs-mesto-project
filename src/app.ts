@@ -15,6 +15,7 @@ import handleError from './errors/error-handler';
 import NotFoundError from './errors/not-found-error';
 import defineUser from './middlewares/hard-code-user';
 import limiter from './middlewares/limiter';
+import bodyParserMiddleware from './middlewares/body-parser-middleware';
 
 const {
   PORT = DEFAULT_PORT,
@@ -24,7 +25,7 @@ const {
 
 const app = express();
 
-app.use(express.json());
+app.use(bodyParserMiddleware);
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(DATABASE);

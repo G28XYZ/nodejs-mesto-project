@@ -1,20 +1,29 @@
-import mongoose from 'mongoose';
-
+import mongoose, { Model } from 'mongoose';
 import { Joi } from 'celebrate';
+import bcrypt from 'bcryptjs';
+
 import { IUser, TModelSettings } from '../utils/types';
 import {
   ERROR_MESSAGES,
   DEFAULT_USER_SETTINGS as DEFAULT,
 } from '../utils/constants';
 import validation from '../utils/validation';
+import UnauthorizedError from '../errors/unauthorized-error';
 
 const { USER, GENERAL } = ERROR_MESSAGES;
+
+interface IUserMethods {
+  findUserByCredentials(email: string, password: string): Promise<IUser>;
+}
 
 /**
  * модель настроек для пользователя с схемами модели данных и ее валидации
  */
-// prettier-ignore next-line
-class UserModelSettings<T extends IUser> implements TModelSettings<T> {
+// prettier-ignore
+class UserModelSettings<
+  T extends IUser,
+  M extends IUserMethods & Model<T>,
+> implements TModelSettings<T, M> {
   nameModel = 'user';
 
   validationSchema: Record<string, Joi.PartialSchemaMap<T>> = {
@@ -55,7 +64,7 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
     );
   }
 
-  schema = new mongoose.Schema<T>(
+  schema = new mongoose.Schema<T, M, IUserMethods>(
     {
       name: {
         type: String,
@@ -90,6 +99,15 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
     },
     // убирает поле __v
     { versionKey: false },
+  ).static(
+    'findUserByCredentials',
+    async function findUserByCredentials(email: string, password: string) {
+      const user = await this.findOne({ email });
+      if (!user) {
+        return Promise.reject(new UnauthorizedError()); // TODO - перенести текст в constants
+      }
+      return bcrypt.compare(password, user.password);
+    },
   );
 
   /** метод для создания схемы валидации в {@link validationSchema} на основе существующих полей */
@@ -98,7 +116,7 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
     nameFields: string[] | string,
     ...otherFields: string[]
   ) {
-    const result = {} as TModelSettings<T>['validationSchema'][string];
+    const result = {} as TModelSettings<T, M>['validationSchema'][string];
     const fields = (
       typeof nameFields === 'string' ? [nameFields] : nameFields
     ).concat(otherFields || []) as (keyof T)[];
@@ -109,7 +127,7 @@ class UserModelSettings<T extends IUser> implements TModelSettings<T> {
   }
 
   get model() {
-    return mongoose.model<T>(this.nameModel, this.schema);
+    return mongoose.model<T, M>(this.nameModel, this.schema);
   }
 }
 
