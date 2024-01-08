@@ -13,10 +13,14 @@ const {
 
 const router = Router();
 
-router.post('/signin', login);
+router.post(
+  '/signin',
+  validator(Segments.BODY, user.validationSchema.signin),
+  login,
+);
 router.post(
   '/signup',
-  validator(Segments.BODY, user.validationSchema.create),
+  validator(Segments.BODY, user.validationSchema.signup),
   createUser,
 );
 

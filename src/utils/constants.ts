@@ -6,6 +6,8 @@ export const DEFAULT_MONGO_DB_PATH = 'mongodb://localhost:27017';
 export const DEFAULT_MONGO_DB_NAME = 'mestodb';
 export const DEFAULT_SALT_LENGTH = 10;
 export const DEFAULT_JWT_SECRET = 'JWT_SECRET';
+// eslint-ignore-quotes next-line
+export const ALLOWED_SYMBOLS_IN_LINK = /-\._~:\/\?#\[\]@!$&'\(\)\*\+,;=/.source;
 
 export const DEFAULT_USER_SETTINGS = {
   NAME: 'Жак-Ив Кусто',
@@ -27,6 +29,7 @@ export const ERROR_MESSAGES = {
     VALIDATION: {
       EMPTY: 'Поле {#label} не должно быть пустым.',
       SYNTAX_JSON: 'Синтаксическая ошибка в теле запроса.',
+      UNKNOWN: 'Поле {#label} недопустимый параметр для данного запроса.',
     },
     LABELS: {
       AVATAR: 'Аватарка',

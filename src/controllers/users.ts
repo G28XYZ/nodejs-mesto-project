@@ -56,7 +56,6 @@ export default class {
     const {
       email,
       password,
-      ...user
     } = body;
     // prettier-ignore
     const {
@@ -65,7 +64,6 @@ export default class {
       about,
       avatar,
     } = await User.create({
-      ...user,
       email,
       password: await bcrypt.hash(password, SALT_LENGTH),
     });
@@ -92,12 +90,7 @@ export default class {
 
     if (!user) return next(new NotFoundError(USER.PROFILE[NOT_FOUND_404]));
 
-    return res.send({
-      _id: user?._id,
-      avatar: user?.avatar,
-      name,
-      about,
-    });
+    return res.send({ name, about });
   }
 
   /** обновить аватар пользователя */
@@ -113,12 +106,7 @@ export default class {
 
     if (!user) return next(new NotFoundError(USER.AVATAR[NOT_FOUND_404]));
 
-    return res.send({
-      _id: user?._id,
-      avatar,
-      name: user?.name,
-      about: user?.about,
-    });
+    return res.send({ avatar });
   }
 
   @catchError(USER.LOGIN, new UnauthorizedError(USER.LOGIN[UNAUTHORIZED_401]))
@@ -140,7 +128,6 @@ export default class {
 
   @catchError(USER.GET, new NotFoundError(USER.GET[NOT_FOUND_404]))
   static async getMe(...[req, res]: TUserCtrlParams) {
-    console.log(req.user?._id);
     return res.send(await User.find({ _id: req.user?._id }));
   }
 }

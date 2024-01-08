@@ -21,7 +21,13 @@ export default async function authProtect(...[req, _, next]: TUserCtrlParams) {
     return next(new UnauthorizedError(ERROR_MESSAGES.USER.VALIDATION.AUTH));
   }
 
-  req.user = verifyToken(authorization.replace('Bearer ', ''));
+  const payload = verifyToken(authorization.replace('Bearer ', ''));
+
+  if (!payload) {
+    return next(new UnauthorizedError(ERROR_MESSAGES.USER.VALIDATION.AUTH));
+  }
+
+  req.user = payload;
 
   return next();
 }

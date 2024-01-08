@@ -28,7 +28,7 @@ class UserModelSettings<
 
   validationSchema: Record<string, Joi.PartialSchemaMap<T>> = {
     /** схема для валидации при создании пользователя */
-    create: {
+    base: {
       name: Joi.string()
         .label(GENERAL.LABELS.USERNAME)
         .min(2)
@@ -55,12 +55,16 @@ class UserModelSettings<
 
   constructor() {
     this.validationSchema.updateProfile = this.createValidationSchema(
-      'create',
       ['name', 'about'],
     );
     this.validationSchema.updateAvatar = this.createValidationSchema(
-      'create',
       'avatar',
+    );
+    this.validationSchema.signin = this.createValidationSchema(
+      ['email', 'password'],
+    );
+    this.validationSchema.signup = this.createValidationSchema(
+      ['email', 'password'],
     );
   }
 
@@ -112,7 +116,6 @@ class UserModelSettings<
 
   /** метод для создания схемы валидации в {@link validationSchema} на основе существующих полей */
   private createValidationSchema(
-    mainField: string,
     nameFields: string[] | string,
     ...otherFields: string[]
   ) {
@@ -121,7 +124,7 @@ class UserModelSettings<
       typeof nameFields === 'string' ? [nameFields] : nameFields
     ).concat(otherFields || []) as (keyof T)[];
     fields.forEach((field) => {
-      result[field] = this.validationSchema[mainField][field];
+      result[field] = this.validationSchema.base[field];
     });
     return result;
   }

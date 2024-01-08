@@ -16,10 +16,10 @@ import auth from './routes/auth';
 import handleError from './errors/error-handler';
 import NotFoundError from './errors/not-found-error';
 
-import defineUser from './middlewares/hard-code-user';
 import limiter from './middlewares/limiter';
 import bodyParserMiddleware from './middlewares/body-parser-middleware';
 import authProtect from './middlewares/auth-protect';
+import { errorLogger, requestLogger } from './middlewares/logger';
 
 const {
   PORT = DEFAULT_PORT,
@@ -36,7 +36,8 @@ mongoose.connect(DATABASE);
 
 app.use(helmet());
 app.use(limiter);
-app.use(defineUser);
+
+app.use(requestLogger);
 
 app.use('/', auth);
 app.use(authProtect);
@@ -45,6 +46,7 @@ app.use('/cards', cardRouter);
 
 app.all('*', (_, __, next) => next(new NotFoundError()));
 
+app.use(errorLogger);
 app.use(handleError);
 
 app.listen(PORT, () => {

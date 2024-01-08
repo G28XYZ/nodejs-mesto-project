@@ -1,13 +1,14 @@
 import Card from '../models/card';
 import ValidationError from '../errors/validation-error';
 import NotFoundError from '../errors/not-found-error';
+import ForbiddenError from '../errors/forbidden-error';
 
 import catchError from '../utils/decorators';
 import { ERROR_MESSAGES } from '../utils/constants';
 import { HTTP_CODES, TCardCtrlParams } from '../utils/types';
 
 const { CARD } = ERROR_MESSAGES;
-const { BAD_REQUEST_400, NOT_FOUND_404 } = HTTP_CODES;
+const { BAD_REQUEST_400, NOT_FOUND_404, FORBIDDEN_403 } = HTTP_CODES;
 
 /** контроллер для {@link Card} */
 export default class {
@@ -36,8 +37,7 @@ export default class {
     if (req.user?._id === card.owner.toString()) {
       return res.send(await Card.findByIdAndDelete(req.params.cardId));
     }
-    return next(new NotFoundError(CARD.DELETE[NOT_FOUND_404]));
-    // return next(new ForbiddenError(CARD.DELETE[FORBIDDEN_403])); // TODO
+    return next(new ForbiddenError(CARD.DELETE[FORBIDDEN_403]));
   }
 
   /** поставить лайк карточке */
